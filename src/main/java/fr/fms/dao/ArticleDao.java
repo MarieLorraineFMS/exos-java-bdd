@@ -40,8 +40,9 @@ public class ArticleDao {
             ps.executeUpdate();
 
             try (ResultSet keys = ps.getGeneratedKeys()) {
-                if (keys.next())
+                if (keys.next()) {
                     return keys.getInt(1);
+                }
             }
         }
         return 0;
@@ -56,8 +57,9 @@ public class ArticleDao {
             ps.setInt(1, id);
 
             try (ResultSet rs = ps.executeQuery()) {
-                if (!rs.next())
+                if (!rs.next()) {
                     return null;
+                }
 
                 return new Article(
                         rs.getInt("IdArticle"),
