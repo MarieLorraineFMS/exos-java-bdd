@@ -2,6 +2,9 @@ package fr.fms.dao;
 
 import fr.fms.config.DbConfig;
 import fr.fms.entity.Article;
+import fr.fms.exceptions.DaoException;
+
+import static fr.fms.utils.Helpers.isNullOrEmpty;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -23,11 +26,27 @@ public class ArticleDao {
                         rs.getString("Brand"),
                         rs.getDouble("UnitaryPrice")));
             }
+            return articles;
+
+        } catch (SQLException e) {
+            throw new DaoException("Failed to read articles : ", e);
         }
-        return articles;
     }
 
-    public int create(Article a) throws SQLException {
+    public int create(Article a) {
+        if (a == null) {
+            throw new DaoException("Article cannot be null");
+        }
+        if (isNullOrEmpty(a.description)) {
+            throw new DaoException("Article description is required");
+        }
+        if (isNullOrEmpty(a.brand)) {
+            throw new DaoException("Article brand is required");
+        }
+        if (a.unitaryPrice < 0) {
+            throw new DaoException("Article price cannot be negative");
+        }
+
         String sql = "INSERT INTO T_Articles (Description, Brand, UnitaryPrice) VALUES (?, ?, ?)";
 
         try (Connection cnx = DbConfig.getConnection();
@@ -39,13 +58,16 @@ public class ArticleDao {
 
             ps.executeUpdate();
 
+            // AUTO-INCREMENT
             try (ResultSet keys = ps.getGeneratedKeys()) {
-                if (keys.next()) {
+                if (keys.next())
                     return keys.getInt(1);
-                }
+                throw new DaoException("Insert succeeded but no generated id was returned");
             }
+
+        } catch (SQLException e) {
+            throw new DaoException("Failed to create article: " + a.description, e);
         }
-        return 0;
     }
 
     public Article readById(int id) throws SQLException {
@@ -66,6 +88,8 @@ public class ArticleDao {
                         rs.getString("Description"),
                         rs.getString("Brand"),
                         rs.getDouble("UnitaryPrice"));
+            } catch (SQLException e) {
+                throw new DaoException("Failed to read article with id : " + id + ". ", e);
             }
         }
     }
@@ -82,6 +106,8 @@ public class ArticleDao {
             ps.setInt(4, a.id);
 
             return ps.executeUpdate() == 1;
+        } catch (SQLException e) {
+            throw new DaoException("Failed to update article with id : " + a.id + ". ", e);
         }
     }
 
@@ -93,6 +119,8 @@ public class ArticleDao {
 
             ps.setInt(1, id);
             return ps.executeUpdate() == 1;
+        } catch (SQLException e) {
+            throw new DaoException("Failed to delete article with id : " + id + ". ", e);
         }
     }
 
