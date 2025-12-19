@@ -5,6 +5,9 @@ import java.util.Date;
 import fr.fms.utils.AppLogger;
 
 public class Ex2Exceptions {
+
+    // for EX2 purpose
+    @SuppressWarnings("null")
     public static void main(String[] args) {
         Date date = null;
         Date today = new Date();
