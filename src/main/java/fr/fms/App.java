@@ -4,6 +4,7 @@ import fr.fms.dao.ArticleDao;
 import fr.fms.entity.Article;
 import fr.fms.exceptions.DaoException;
 import fr.fms.exceptions.Ex2Exceptions;
+import fr.fms.file.Ex4File;
 import fr.fms.thread.Ex31Thread;
 import fr.fms.thread.Ex32Thread;
 
@@ -37,6 +38,7 @@ public class App {
                 System.out.println("3) Ex3.1 - Threads");
                 System.out.println("4) Ex3.2 - Runnable");
                 System.out.println("5) Ex3.3 - Horloge digitale");
+                System.out.println("6) Ex4 - File");
                 System.out.println("0) Quitter");
                 System.out.print("Choix : ");
 
@@ -54,6 +56,7 @@ public class App {
                     case "3" -> Ex31Thread.main(new String[0]);
                     case "4" -> Ex32Thread.main(new String[0]);
                     case "5" -> runInNewTerminal("fr.fms.thread.Ex33Thread");
+                    case "6" -> Ex4File.main(new String[0]);
                     default -> System.out.println("Choix invalide.");
                 }
 
